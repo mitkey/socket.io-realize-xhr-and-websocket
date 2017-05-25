@@ -152,13 +152,11 @@ class IOConnection implements IOCallback {
 	/** true if there's already a keepalive in {@link #outputBuffer}. */
 	private boolean keepAliveInQueue;
 
-	/**
-	 * The heartbeat timeout task. Only null before connection has been initialised.
-	 */
-	private HearbeatTimeoutTask heartbeatTimeoutTask;
+	/** The heartbeat timeout task. Only null before connection has been initialised. */
+	private TimerTask heartbeatTimeoutTask;
 
 	/** The reconnect task. Null if no reconnection is in progress. */
-	private ReconnectTask reconnectTask = null;
+	private TimerTask reconnectTask = null;
 
 	/**
 	 * Instantiates a new IOConnection.
@@ -282,8 +280,17 @@ class IOConnection implements IOCallback {
 			if (reconnectTask != null) {
 				reconnectTask.cancel();
 			}
-			reconnectTask = new ReconnectTask();
-			backgroundTimer.schedule(reconnectTask, 1000);
+			backgroundTimer.schedule(reconnectTask = new TimerTask() {
+				@Override
+				public void run() {
+					// The Class ReconnectTask. Handles reconnect attempts
+					connectTransport();
+					if (!keepAliveInQueue) {
+						sendPlain("2::");
+						keepAliveInQueue = true;
+					}
+				}
+			}, 1000);
 		}
 	}
 
@@ -733,8 +740,13 @@ class IOConnection implements IOCallback {
 			heartbeatTimeoutTask.cancel();
 		}
 		if (getState() != STATE_INVALID) {
-			heartbeatTimeoutTask = new HearbeatTimeoutTask();
-			backgroundTimer.schedule(heartbeatTimeoutTask, closingTimeout + heartbeatTimeout);
+			// The Class HearbeatTimeoutTask. Handles dropping this IOConnection if no heartbeat is received within life time.
+			backgroundTimer.schedule(heartbeatTimeoutTask = new TimerTask() {
+				@Override
+				public void run() {
+					error(new SocketIOException("Timeout Error. No heartbeat from server within life time of the socket. closing.", lastException));
+				}
+			}, closingTimeout + heartbeatTimeout);
 		}
 	}
 
@@ -854,39 +866,4 @@ class IOConnection implements IOCallback {
 
 	}
 
-	/**
-	 * The Class HearbeatTimeoutTask. Handles dropping this IOConnection if no heartbeat is received within life time.
-	 */
-	private class HearbeatTimeoutTask extends TimerTask {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.TimerTask#run()
-		 */
-		@Override
-		public void run() {
-			error(new SocketIOException("Timeout Error. No heartbeat from server within life time of the socket. closing.", lastException));
-		}
-	}
-
-	/**
-	 * The Class ReconnectTask. Handles reconnect attempts
-	 */
-	private class ReconnectTask extends TimerTask {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.util.TimerTask#run()
-		 */
-		@Override
-		public void run() {
-			connectTransport();
-			if (!keepAliveInQueue) {
-				sendPlain("2::");
-				keepAliveInQueue = true;
-			}
-		}
-	}
 }

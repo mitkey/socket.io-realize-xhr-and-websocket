@@ -65,11 +65,6 @@ class XhrTransport implements IOTransport {
 			super(TRANSPORT_NAME);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Thread#run()
-		 */
 		@Override
 		public void run() {
 			connection.transportConnected();
@@ -113,7 +108,6 @@ class XhrTransport implements IOTransport {
 						}
 						setBlocked(false);
 					}
-
 				} catch (IOException e) {
 					if (connection != null && interrupted() == false) {
 						connection.transportError(e);
@@ -161,11 +155,6 @@ class XhrTransport implements IOTransport {
 		this.url = url;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.socket.IOTransport#connect()
-	 */
 	@Override
 	public void connect() {
 		this.setConnect(true);
@@ -173,42 +162,22 @@ class XhrTransport implements IOTransport {
 		pollThread.start();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.socket.IOTransport#disconnect()
-	 */
 	@Override
 	public void disconnect() {
 		this.setConnect(false);
 		pollThread.interrupt();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.socket.IOTransport#send(java.lang.String)
-	 */
 	@Override
 	public void send(String text) throws IOException {
 		sendBulk(new String[] { text });
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.socket.IOTransport#canSendBulk()
-	 */
 	@Override
 	public boolean canSendBulk() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.socket.IOTransport#sendBulk(java.lang.String[])
-	 */
 	@Override
 	public void sendBulk(String[] texts) throws IOException {
 		queue.addAll(Arrays.asList(texts));
@@ -218,50 +187,23 @@ class XhrTransport implements IOTransport {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.socket.IOTransport#invalidate()
-	 */
 	@Override
 	public void invalidate() {
 		this.connection = null;
 	}
 
-	/**
-	 * Checks if is connect.
-	 * 
-	 * @return true, if is connect
-	 */
 	private synchronized boolean isConnect() {
 		return connect;
 	}
 
-	/**
-	 * Sets the connect.
-	 * 
-	 * @param connect
-	 *            the new connect
-	 */
 	private synchronized void setConnect(boolean connect) {
 		this.connect = connect;
 	}
 
-	/**
-	 * Checks if is blocked.
-	 * 
-	 * @return true, if is blocked
-	 */
 	private synchronized boolean isBlocked() {
 		return blocked;
 	}
 
-	/**
-	 * Sets the blocked.
-	 * 
-	 * @param blocked
-	 *            the new blocked
-	 */
 	private synchronized void setBlocked(boolean blocked) {
 		this.blocked = blocked;
 	}
