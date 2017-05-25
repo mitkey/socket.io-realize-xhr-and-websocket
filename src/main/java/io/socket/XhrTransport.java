@@ -76,12 +76,11 @@ class XhrTransport implements IOTransport {
 			while (isConnect()) {
 				try {
 					String line;
-					URL url = new URL(XhrTransport.this.url.toString() + "?t="
-							+ System.currentTimeMillis());
+					URL url = new URL(XhrTransport.this.url.toString() + "?t=" + System.currentTimeMillis());
 					urlConnection = (HttpURLConnection) url.openConnection();
 					SSLContext context = IOConnection.getSslContext();
-					if(urlConnection instanceof HttpsURLConnection && context != null) {
-						((HttpsURLConnection)urlConnection).setSSLSocketFactory(context.getSocketFactory());
+					if (urlConnection instanceof HttpsURLConnection && context != null) {
+						((HttpsURLConnection) urlConnection).setSSLSocketFactory(context.getSocketFactory());
 					}
 					if (!queue.isEmpty()) {
 						urlConnection.setDoOutput(true);
@@ -93,8 +92,7 @@ class XhrTransport implements IOTransport {
 							Iterator<String> iter = queue.iterator();
 							while (iter.hasNext()) {
 								String junk = iter.next();
-								line = IOConnection.FRAME_DELIMITER + junk.length()
-										+ IOConnection.FRAME_DELIMITER + junk;
+								line = IOConnection.FRAME_DELIMITER + junk.length() + IOConnection.FRAME_DELIMITER + junk;
 								output.write(line.getBytes(CHARSET));
 								iter.remove();
 							}
@@ -102,14 +100,13 @@ class XhrTransport implements IOTransport {
 						output.close();
 						InputStream input = urlConnection.getInputStream();
 						byte[] buffer = new byte[1024];
-						while(input.read(buffer) > 0) {
+						while (input.read(buffer) > 0) {
 						}
 						input.close();
 					} else {
 						setBlocked(true);
 						InputStream plainInput = urlConnection.getInputStream();
-						BufferedReader input = new BufferedReader(
-								new InputStreamReader(plainInput, CHARSET));
+						BufferedReader input = new BufferedReader(new InputStreamReader(plainInput, CHARSET));
 						while ((line = input.readLine()) != null) {
 							if (connection != null)
 								connection.transportData(line);
@@ -143,13 +140,10 @@ class XhrTransport implements IOTransport {
 	 */
 	public static IOTransport create(URL url, IOConnection connection) {
 		try {
-			URL xhrUrl = new URL(url.toString() + IOConnection.SOCKET_IO_1
-					+ TRANSPORT_NAME + "/" + connection.getSessionId());
+			URL xhrUrl = new URL(url.toString() + IOConnection.SOCKET_IO_1 + TRANSPORT_NAME + "/" + connection.getSessionId());
 			return new XhrTransport(xhrUrl, connection);
 		} catch (MalformedURLException e) {
-			throw new RuntimeException(
-					"Malformed Internal url. This should never happen. Please report a bug.",
-					e);
+			throw new RuntimeException("Malformed Internal url. This should never happen. Please report a bug.", e);
 		}
 
 	}
@@ -276,4 +270,5 @@ class XhrTransport implements IOTransport {
 	public String getName() {
 		return TRANSPORT_NAME;
 	}
+
 }
