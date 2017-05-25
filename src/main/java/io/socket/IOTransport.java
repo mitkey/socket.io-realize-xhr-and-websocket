@@ -36,16 +36,14 @@ interface IOTransport {
 	void send(String text) throws Exception;
 
 	/**
-	 * return true if the IOTransport prefers to send multiple messages at a
-	 * time.
+	 * return true if the IOTransport prefers to send multiple messages at a time.
 	 * 
 	 * @return true, if successful
 	 */
 	boolean canSendBulk();
 
 	/**
-	 * Instructs the IOTransport to send multiple messages. This is only called
-	 * when canSendBulk returns true.
+	 * Instructs the IOTransport to send multiple messages. This is only called when canSendBulk returns true.
 	 * 
 	 * @param texts
 	 *            the texts
@@ -55,11 +53,10 @@ interface IOTransport {
 	void sendBulk(String[] texts) throws IOException;
 
 	/**
-	 * Instructs the IOTransport to invalidate. DO NOT DISCONNECT from the
-	 * server. just make sure, that events are not populated to the
-	 * {@link IOConnection}
+	 * Instructs the IOTransport to invalidate. DO NOT DISCONNECT from the server. just make sure, that events are not populated to the {@link IOConnection}
 	 */
 	void invalidate();
-	
+
 	String getName();
+
 }
