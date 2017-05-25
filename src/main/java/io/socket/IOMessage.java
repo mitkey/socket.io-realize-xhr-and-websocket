@@ -60,7 +60,7 @@ class IOMessage {
 
 	/** Type */
 	private int type;
-	
+
 	/**
 	 * Instantiates a new IOMessage by given data.
 	 * 
@@ -96,8 +96,7 @@ class IOMessage {
 	}
 
 	/**
-	 * Instantiates a new IOMessage from a String representation. If the String
-	 * is not well formated, the result is undefined.
+	 * Instantiates a new IOMessage from a String representation. If the String is not well formated, the result is undefined.
 	 * 
 	 * @param message
 	 *            the message
@@ -106,7 +105,7 @@ class IOMessage {
 		String[] fields = message.split(":", NUM_FIELDS);
 		for (int i = 0; i < fields.length; i++) {
 			this.fields[i] = fields[i];
-			if(i == FIELD_TYPE)
+			if (i == FIELD_TYPE)
 				this.type = Integer.parseInt(fields[i]);
 		}
 	}
@@ -117,7 +116,7 @@ class IOMessage {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		for(int i = 0; i < fields.length; i++) {
+		for (int i = 0; i < fields.length; i++) {
 			builder.append(':');
 			if (fields[i] != null)
 				builder.append(fields[i]);

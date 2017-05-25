@@ -35,4 +35,5 @@ public class SocketIOException extends Exception {
 	public SocketIOException(String message, Exception ex) {
 		super(message, ex);
 	}
+
 }

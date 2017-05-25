@@ -8,9 +8,9 @@
  */
 package io.socket;
 
-import static org.junit.Assert.*;
-
-import io.socket.testutils.MutateProxy;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,12 +19,15 @@ import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.alibaba.fastjson.JSONObject;
+
+import io.socket.testutils.MutateProxy;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -81,9 +84,8 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 	}
 
 	/**
-	 * Sets up the test. Starts the node testserver on a randomly choosed port,
-	 * starts backgroundthreads for processing stdin/stdout. Adds shutdown-hook
-	 * for clean kill of the node server.
+	 * Sets up the test. Starts the node testserver on a randomly choosed port, starts backgroundthreads for processing stdin/stdout. Adds shutdown-hook for clean kill of the node
+	 * server.
 	 * 
 	 * @throws Exception
 	 *             the exception
@@ -95,17 +97,14 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		outputs = new LinkedBlockingQueue<String>();
 		args = new LinkedBlockingQueue<Object>();
 		System.out.println("Connect with " + transport);
-		node = Runtime.getRuntime().exec(
-				new String[] { NODE, "./tests/io/socket/testutils/socketio.js",
-						"" + getPort(), transport });
+		node = Runtime.getRuntime().exec(new String[] { NODE, "./tests/io/socket/testutils/socketio.js", "" + getPort(), transport });
 		proxy = new MutateProxy(getPort() + 1, getPort());
 		proxy.start();
 
 		stdoutThread = new Thread("stdoutThread") {
 			@Override
 			public void run() {
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(node.getInputStream()));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(node.getInputStream()));
 				String line;
 				try {
 					while ((line = reader.readLine()) != null) {
@@ -127,8 +126,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		stderrThread = new Thread("stderrThread") {
 			@Override
 			public void run() {
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(node.getErrorStream()));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(node.getErrorStream()));
 				try {
 					String line;
 					while ((line = reader.readLine()) != null) {
@@ -190,8 +188,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 	 */
 	void doConnect() throws Exception {
 		// Setting up socket connection
-		socket = new SocketIO("http://127.0.0.1:" + getProxyPort() + "/main",
-				this);
+		socket = new SocketIO("http://127.0.0.1:" + getProxyPort() + "/main", this);
 		assertEquals("onConnect", takeEvent());
 		assertEquals(transport, socket.getTransport());
 	}
@@ -252,7 +249,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		assertEquals("Test String", "on", takeEvent());
 		assertEquals(str, takeArg());
 
-		JSONObject obj = new JSONObject("{'foo':'bar'}");
+		JSONObject obj = JSONObject.parseObject("{'foo':'bar'}");
 		socket.emit("echo", obj);
 		assertEquals("Test JSON", "on", takeEvent());
 		assertEquals(obj.toString(), takeArg().toString());
@@ -274,13 +271,17 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		assertEquals("onMessage_string", events.take());
 		assertEquals(str, takeArg());
 
-		/*
+		/**
+		 * <pre>
 		 * // Server sends us a string instead of a JSONObject, strange thing
+		 * 
 		 * JSONObject obj = new JSONObject("{'foo':'bar'}");
-		 * socket.emit("echoSend", obj); assertEquals("Test JSON",
-		 * "onMessage_json", takeEvent()); assertEquals(obj.toString(),
-		 * takeArg().toString());
+		 * socket.emit("echoSend", obj);
+		 * assertEquals("Test JSON", "onMessage_json", takeEvent());
+		 * assertEquals(obj.toString(), takeArg().toString());
+		 * </pre>
 		 */
+
 		doClose();
 	}
 
@@ -292,16 +293,14 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 	 */
 	@Test(timeout = TIMEOUT)
 	public void namespaces() throws Exception {
-		SocketIO ns1 = new SocketIO("http://127.0.0.1:" + getProxyPort()
-				+ "/ns1", this);
+		SocketIO ns1 = new SocketIO("http://127.0.0.1:" + getProxyPort() + "/ns1", this);
 		assertEquals("onConnect", takeEvent());
 
 		doConnect();
 		ns1.disconnect();
 		assertEquals("onDisconnect", takeEvent());
 
-		SocketIO ns2 = new SocketIO("http://127.0.0.1:" + getProxyPort()
-				+ "/ns2", this);
+		SocketIO ns2 = new SocketIO("http://127.0.0.1:" + getProxyPort() + "/ns2", this);
 		assertEquals("onConnect", takeEvent());
 		assertEquals("onMessage_string", takeEvent());
 		assertEquals("ns2", takeArg());
@@ -312,8 +311,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		assertEquals("onMessage_string", takeEvent());
 		assertEquals("TESTSTRING", takeArg());
 
-		SocketIO ns2_2 = new SocketIO("http://127.0.0.1:" + getProxyPort()
-				+ "/ns2", this);
+		SocketIO ns2_2 = new SocketIO("http://127.0.0.1:" + getProxyPort() + "/ns2", this);
 		assertEquals("onConnect", takeEvent());
 
 		assertEquals("onMessage_string", takeEvent());
@@ -385,7 +383,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		assertEquals("on", takeEvent());
 		doClose();
 	}
-	
+
 	// END TESTS
 
 	/**
@@ -460,8 +458,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see io.socket.IOCallback#onMessage(java.lang.String,
-	 * io.socket.IOAcknowledge)
+	 * @see io.socket.IOCallback#onMessage(java.lang.String, io.socket.IOAcknowledge)
 	 */
 	@Override
 	public void onMessage(String data, IOAcknowledge ack) {
@@ -473,8 +470,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see io.socket.IOCallback#onMessage(org.json.JSONObject,
-	 * io.socket.IOAcknowledge)
+	 * @see io.socket.IOCallback#onMessage(org.json.JSONObject, io.socket.IOAcknowledge)
 	 */
 	@Override
 	public void onMessage(JSONObject json, IOAcknowledge ack) {
@@ -485,8 +481,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see io.socket.IOCallback#on(java.lang.String, io.socket.IOAcknowledge,
-	 * java.lang.Object[])
+	 * @see io.socket.IOCallback#on(java.lang.String, io.socket.IOAcknowledge, java.lang.Object[])
 	 */
 	@Override
 	public void on(String event, IOAcknowledge ack, Object... args) {
