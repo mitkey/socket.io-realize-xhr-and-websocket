@@ -41,13 +41,10 @@ public class MutateProxy extends Thread {
 		}
 	}
 
-	private void client(Socket clientSocket) throws UnknownHostException,
-			IOException {
+	private void client(Socket clientSocket) throws UnknownHostException, IOException {
 		Socket serverSocket = new Socket("127.0.0.1", this.socketPort);
-		serverToClient = new Forwarder("serverToClient", serverSocket,
-				clientSocket);
-		clientToServer = new Forwarder("clientToServer", clientSocket,
-				serverSocket);
+		serverToClient = new Forwarder("serverToClient", serverSocket, clientSocket);
+		clientToServer = new Forwarder("clientToServer", clientSocket, serverSocket);
 		serverToClient.start();
 		clientToServer.start();
 	}
