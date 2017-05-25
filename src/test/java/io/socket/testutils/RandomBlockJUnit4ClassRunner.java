@@ -1,5 +1,6 @@
 package io.socket.testutils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -15,7 +16,7 @@ public class RandomBlockJUnit4ClassRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected java.util.List<org.junit.runners.model.FrameworkMethod> computeTestMethods() {
-		java.util.List<org.junit.runners.model.FrameworkMethod> methods = super.computeTestMethods();
+		java.util.List<org.junit.runners.model.FrameworkMethod> methods = new ArrayList<>(super.computeTestMethods());
 		Collections.shuffle(methods);
 		return methods;
 	}
