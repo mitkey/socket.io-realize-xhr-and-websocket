@@ -46,3 +46,10 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.4'
 }
+
+task task(overwrite: true) << {
+    println('I am ignore task --> test.')
+}
+task testClasses(overwrite: true) << {
+    println('I am ignore task --> testClasses.')
+}
