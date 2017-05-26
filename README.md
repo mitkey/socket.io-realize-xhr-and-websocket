@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/mitkey/socket.io-realize-xhr-and-websocket.svg?branch=master)](https://travis-ci.org/mitkey/socket.io-realize-xhr-and-websocket)
+[![](https://jitpack.io/v/mitkey/socket.io-realize-xhr-and-websocket.svg)](https://jitpack.io/#mitkey/socket.io-realize-xhr-and-websocket)
 
 # socket.io-realize-xhr-and-websocket
 Socket.IO Client Implementation in Java. Realization XhrTransport and WebsocketTransport.
