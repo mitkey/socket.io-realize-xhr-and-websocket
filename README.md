@@ -15,7 +15,7 @@ I'm just using the gradle build again, and Use fastjson instead of org.json
 
 [https://github.com/TooTallNate/Java-WebSocket](https://github.com/TooTallNate/Java-WebSocket)
 	
-	use jitpack
+	can use jitpack
 		compile 'com.github.TooTallNate:Java-WebSocket:Java-WebSocket-1.3.3'		
 			----> maven { url 'https://jitpack.io' }
 	replace
